@@ -1,0 +1,66 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|Read|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=PostToolUse --tool=$TOOL_NAME --status=success --exit_code=$EXIT_CODE",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=PostToolUseFailure --tool=$TOOL_NAME --error=\"$ERROR_MESSAGE\"",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|Read|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=PreToolUse --tool=$TOOL_NAME",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SessionStart",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "python -c \"import sys; from pathlib import Path; daemon_pid = Path.home() / '.claude-pet-companion' / 'daemon.pid'; print(f'Pet daemon check: {daemon_pid.exists()}')\"",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SessionEnd"
+          }
+        ]
+      }
+    ]
+  }
+}

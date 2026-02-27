@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #pet-container {
+            position: relative;
+            width: 350px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            user-select: none;
+        }
+
+        #pet-canvas-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 15px;
+        }
+
+        #pet-canvas {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            width: 200px;
+            height: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        #status-bars {
+            margin-bottom: 15px;
+        }
+
+        .stat-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            width: 25px;
+            text-align: center;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 14px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #ccc;
+        }
+
+        .bar-fill {
+            height: 100%;
+            transition: width 0.5s ease, background 0.3s;
+            border-radius: 8px;
+        }
+
+        .bar-fill.hunger {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e53);
+        }
+
+        .bar-fill.happiness {
+            background: linear-gradient(90deg, #ffd93d, #ffaa00);
+        }
+
+        .bar-fill.energy {
+            background: linear-gradient(90deg, #6bcb77, #4ecdc4);
+        }
+
+        .stat-value {
+            font-size: 12px;
+            width: 35px;
+            text-align: right;
+            color: #666;
+            font-weight: bold;
+        }
+
+        #level-info {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+        }
+
+        #level-badge {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        #species-name {
+            font-size: 16px;
+            margin-top: 5px;
+            text-transform: capitalize;
+        }
+
+        .xp-bar-container {
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        #xp-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        #xp-text {
+            font-size: 11px;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        #mood-display {
+            text-align: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        #mood-emoji {
+            font-size: 28px;
+        }
+
+        #mood-text {
+            font-size: 14px;
+            color: #555;
+            text-transform: capitalize;
+            font-weight: bold;
+        }
+
+        #action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .pixel-btn {
+            flex: 1;
+            padding: 12px 8px;
+            background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
+            border: 3px solid #5a5a7a;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .pixel-btn:hover {
+            background: linear-gradient(180deg, #5a5a7a 0%, #4a4a6a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .pixel-btn:active {
+            transform: translateY(0);
+        }
+
+        .pixel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-icon {
+            font-size: 22px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        #speech-bubble {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: white;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 100;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        #speech-bubble.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #speech-bubble::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 15px;
+            border: 10px solid transparent;
+            border-top-color: white;
+            border-bottom: none;
+        }
+
+        #notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: bold;
+            box-shadow: 0 5px 25px rgba(255, 215, 0, 0.4);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #notification.show {
+            opacity: 1;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        @keyframes sleep {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .anim-bounce { animation: bounce 0.5s ease-in-out; }
+        .anim-wobble { animation: wobble 0.3s ease-in-out; }
+        .anim-sleep { animation: sleep 2s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <div id="pet-container">
+        <div id="speech-bubble">Hello!</div>
+
+        <div id="pet-canvas-container">
+            <canvas id="pet-canvas" width="64" height="64"></canvas>
+        </div>
+
+        <div id="level-info">
+            <div id="level-badge">Level 1</div>
+            <div id="species-name">Egg</div>
+            <div class="xp-bar-container">
+                <div id="xp-bar" style="width: 0%"></div>
+            </div>
+            <div id="xp-text">0/100 XP</div>
+        </div>
+
+        <div id="status-bars">
+            <div class="stat-bar">
+                <span class="stat-label">🍖</span>
+                <div class="bar-container">
+                    <div id="hunger-bar" class="bar-fill hunger" style="width: 100%"></div>
+                </div>
+                <span id="hunger-value" class="stat-value">100</span>
+            </div>
+            <div class="stat-bar">
+                <span class="stat-label">😊</span>
+                <div class="bar-container">
+                    <div id="happiness-bar" class="bar-fill happiness" style="width: 100%"></div>
+                </div>
+                <span id="happiness-value" class="stat-value">100</span>
+            </div>
+            <div class="stat-bar">
+                <span class="stat-label">⚡</span>
+                <div class="bar-container">
+                    <div id="energy-bar" class="bar-fill energy" style="width: 100%"></div>
+                </div>
+                <span id="energy-value" class="stat-value">100</span>
+            </div>
+        </div>
+
+        <div id="mood-display">
+            <span id="mood-emoji">😊</span>
+            <span id="mood-text">Content</span>
+        </div>
+
+        <div id="action-buttons">
+            <button class="pixel-btn" id="btn-feed" title="喂食">
+                <span class="btn-icon">🍖</span>
+                喂食
+            </button>
+            <button class="pixel-btn" id="btn-play" title="玩耍">
+                <span class="btn-icon">🎾</span>
+                玩耍
+            </button>
+            <button class="pixel-btn" id="btn-sleep" title="睡觉">
+                <span class="btn-icon">😴</span>
+                睡觉
+            </button>
+        </div>
+    </div>
+
+    <div id="notification"></div>
+
+    <script>
+        // Pet State
+        let petState = {
+            name: "Pixel",
+            level: 1,
+            xp: 0,
+            xpToNext: 100,
+            hunger: 100,
+            happiness: 100,
+            energy: 100,
+            mood: "content",
+            isSleeping: false,
+            evolutionStage: 0,
+            evolutionName: "Egg"
+        };
+
+        const evolutionNames = ["Egg", "Baby", "Child", "Teen", "Adult", "Elder", "Ancient"];
+        const moodEmojis = {
+            content: "😊", happy: "😄", excited: "🤩", ecstatic: "🥳",
+            worried: "😟", sad: "😢", sleepy: "😴", hungry: "😋"
+        };
+
+        // Canvas setup
+        const canvas = document.getElementById('pet-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        let animationId;
+        let currentFrame = 0;
+        let currentAnimation = 'idle';
+
+        // Draw pixel pet
+        function drawPet() {
+            ctx.clearRect(0, 0, 64, 64);
+
+            const colors = {
+                body: '#f0e6d3',
+                eye: '#333333',
+                shine: '#ffffff',
+                mouth: '#c9987a'
+            };
+
+            // Body (egg shape)
+            for (let y = 20; y <= 44; y++) {
+                const w = Math.abs(y - 32) <= 8 ? 24 - Math.abs(y - 32) : 16 + Math.abs(y - 32);
+                const startX = 32 - Math.floor(w / 2);
+                for (let x = startX; x < startX + w; x++) {
+                    if (x >= 20 && x <= 44) {
+                        ctx.fillStyle = colors.body;
+                        ctx.fillRect(x, y, 1, 1);
+                    }
+                }
+            }
+
+            // Eyes
+            if (petState.isSleeping) {
+                // Sleeping eyes - lines
+                ctx.fillStyle = '#666';
+                for (let i = 0; i < 3; i++) {
+                    ctx.fillRect(25 + i, 29, 1, 1);
+                    ctx.fillRect(36 + i, 29, 1, 1);
+                }
+            } else {
+                // Normal eyes
+                ctx.fillStyle = colors.eye;
+                ctx.fillRect(26, 28, 2, 2);
+                ctx.fillRect(27, 28, 2, 2);
+                ctx.fillRect(35, 28, 2, 2);
+                ctx.fillRect(36, 28, 2, 2);
+                ctx.fillRect(26, 29, 2, 2);
+                ctx.fillRect(27, 29, 2, 2);
+                ctx.fillRect(35, 29, 2, 2);
+                ctx.fillRect(36, 29, 2, 2);
+                // Eye shine
+                ctx.fillStyle = colors.shine;
+                ctx.fillRect(26, 28, 1, 1);
+                ctx.fillRect(35, 28, 1, 1);
+            }
+
+            // Mouth
+            ctx.fillStyle = petState.isSleeping ? '#aaa' : colors.mouth;
+            if (petState.mood === 'happy' || petState.mood === 'excited') {
+                // Big smile
+                for (let x = 28; x <= 36; x++) {
+                    ctx.fillRect(x, 34, 1, 1);
+                }
+                for (let x = 29; x <= 35; x++) {
+                    ctx.fillRect(x, 35, 1, 1);
+                }
+            } else if (petState.mood === 'sad' || petState.mood === 'worried') {
+                // Frown
+                for (let x = 29; x <= 35; x++) {
+                    ctx.fillRect(x, 35, 1, 1);
+                }
+            } else {
+                // Normal smile
+                for (let x = 28; x <= 36; x++) {
+                    ctx.fillRect(x, 34, 1, 1);
+                }
+            }
+
+            // Sleep Z's
+            if (petState.isSleeping) {
+                ctx.fillStyle = 'rgba(100,100,100,0.5)';
+                ctx.fillRect(45, 15, 1, 1);
+                ctx.fillStyle = 'rgba(100,100,100,0.3)';
+                ctx.fillRect(48, 12, 1, 1);
+            }
+        }
+
+        function animate() {
+            drawPet();
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Update UI
+        function updateUI() {
+            // Stats
+            document.getElementById('hunger-bar').style.width = petState.hunger + '%';
+            document.getElementById('hunger-value').textContent = petState.hunger;
+            document.getElementById('happiness-bar').style.width = petState.happiness + '%';
+            document.getElementById('happiness-value').textContent = petState.happiness;
+            document.getElementById('energy-bar').style.width = petState.energy + '%';
+            document.getElementById('energy-value').textContent = petState.energy;
+
+            // Level
+            document.getElementById('level-badge').textContent = 'Level ' + petState.level;
+            document.getElementById('species-name').textContent = petState.evolutionName;
+            const xpPercent = (petState.xp / petState.xpToNext) * 100;
+            document.getElementById('xp-bar').style.width = xpPercent + '%';
+            document.getElementById('xp-text').textContent = petState.xp + '/' + petState.xpToNext + ' XP';
+
+            // Mood
+            document.getElementById('mood-emoji').textContent = moodEmojis[petState.mood] || '😊';
+            document.getElementById('mood-text').textContent = petState.mood.charAt(0).toUpperCase() + petState.mood.slice(1);
+
+            // Sleep button
+            const sleepBtn = document.getElementById('btn-sleep');
+            sleepBtn.querySelector('.btn-icon').textContent = petState.isSleeping ? '☀️' : '😴';
+            sleepBtn.childNodes[1].textContent = petState.isSleeping ? ' 醒来' : ' 睡觉';
+
+            // Disable other buttons when sleeping
+            document.querySelectorAll('.pixel-btn:not(#btn-sleep)').forEach(btn => {
+                btn.disabled = petState.isSleeping;
+            });
+
+            // Animation
+            if (petState.isSleeping) {
+                canvas.classList.add('anim-sleep');
+            } else {
+                canvas.classList.remove('anim-sleep');
+            }
+        }
+
+        // Actions
+        function feed() {
+            if (petState.isSleeping) return;
+            petState.hunger = Math.min(100, petState.hunger + 30);
+            petState.happiness = Math.min(100, petState.happiness + 5);
+            petState.xp += 10;
+            showSpeech('好吃! 🍖');
+            animateAction('bounce');
+            checkLevelUp();
+            updateUI();
+            saveState();
+        }
+
+        function play() {
+            if (petState.isSleeping) return;
+            petState.happiness = Math.min(100, petState.happiness + 25);
+            petState.energy = Math.max(0, petState.energy - 10);
+            petState.hunger = Math.max(0, petState.hunger - 5);
+            petState.xp += 15;
+            petState.mood = 'happy';
+            showSpeech('好开心! 🎉');
+            animateAction('wobble');
+            checkLevelUp();
+            updateUI();
+            saveState();
+        }
+
+        function sleep() {
+            petState.isSleeping = !petState.isSleeping;
+            if (petState.isSleeping) {
+                petState.energy = Math.min(100, petState.energy + 30);
+                petState.mood = 'sleepy';
+                showSpeech('晚安... 😴');
+            } else {
+                petState.energy = Math.max(0, petState.energy - 10);
+                petState.mood = 'content';
+                showSpeech('早安! ☀️');
+            }
+            updateUI();
+            saveState();
+        }
+
+        function checkLevelUp() {
+            while (petState.xp >= petState.xpToNext) {
+                petState.xp -= petState.xpToNext;
+                petState.level++;
+                petState.xpToNext = Math.floor(100 * Math.pow(1.5, petState.level - 1));
+
+                // Check evolution
+                const evoLevels = [10, 20, 30, 50, 75];
+                for (let i = 0; i < evoLevels.length; i++) {
+                    if (petState.level === evoLevels[i] && petState.evolutionStage < i + 1) {
+                        petState.evolutionStage = i + 1;
+                        petState.evolutionName = evolutionNames[petState.evolutionStage];
+                        showNotification('进化! ' + petState.evolutionName + '! 🌟');
+                    }
+                }
+
+                showNotification('升级! Level ' + petState.level + '! 🎉');
+            }
+        }
+
+        function showSpeech(text) {
+            const bubble = document.getElementById('speech-bubble');
+            bubble.textContent = text;
+            bubble.classList.add('show');
+            setTimeout(() => bubble.classList.remove('show'), 2000);
+        }
+
+        function showNotification(text) {
+            const notif = document.getElementById('notification');
+            notif.textContent = text;
+            notif.classList.add('show');
+            setTimeout(() => notif.classList.remove('show'), 3000);
+        }
+
+        function animateAction(animClass) {
+            canvas.classList.add('anim-' + animClass);
+            setTimeout(() => canvas.classList.remove('anim-' + animClass), 500);
+        }
+
+        // Save/Load state
+        function saveState() {
+            localStorage.setItem('claudePetState', JSON.stringify(petState));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('claudePetState');
+            if (saved) {
+                petState = JSON.parse(saved);
+            }
+            updateUI();
+        }
+
+        // Event listeners
+        document.getElementById('btn-feed').addEventListener('click', feed);
+        document.getElementById('btn-play').addEventListener('click', play);
+        document.getElementById('btn-sleep').addEventListener('click', sleep);
+
+        // Click on pet
+        canvas.addEventListener('click', () => {
+            if (!petState.isSleeping) {
+                showSpeech(['❤️', '嘿!', '真开心!', '*蹭蹭*', '你真棒!'][Math.floor(Math.random() * 5)]);
+                animateAction('bounce');
+                petState.happiness = Math.min(100, petState.happiness + 2);
+                updateUI();
+            }
+        });
+
+        // Drag functionality
+        let isDragging = false;
+        const container = document.getElementById('pet-container');
+        let offsetX, offsetY;
+
+        container.addEventListener('mousedown', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                isDragging = true;
+                offsetX = e.clientX - container.offsetLeft;
+                offsetY = e.clientY - container.offsetTop;
+                container.style.position = 'fixed';
+                container.style.cursor = 'grabbing';
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                container.style.left = (e.clientX - offsetX) + 'px';
+                container.style.top = (e.clientY - offsetY) + 'px';
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            container.style.cursor = '';
+        });
+
+        // Initialize
+        loadState();
+        animate();
+    </script>
+</body>
+</html>

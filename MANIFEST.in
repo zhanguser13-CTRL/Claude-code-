@@ -1,0 +1,16 @@
+include README.md
+include LICENSE
+include INSTALL.md
+include RELEASE.md
+
+recursive-include claude_pet_companion *.py *.md *.json *.html *.bat
+recursive-include claude_pet_companion/webview *.html *.css *.js *.json
+recursive-include claude_pet_companion/data *.json
+recursive-include claude_pet_companion/skills *.py *.md
+recursive-include claude_pet_companion/agents *.md
+recursive-include claude_pet_companion/hooks *.json
+recursive-include claude_pet_companion/.claude-plugin *.json
+recursive-include claude_pet_companion/render *.py
+recursive-include claude_pet_companion/items *.py
+recursive-include claude_pet_companion/memories *.py
+recursive-include claude_pet_companion/scripts *.py

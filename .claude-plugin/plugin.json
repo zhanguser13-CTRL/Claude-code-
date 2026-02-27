@@ -1,0 +1,65 @@
+{
+  "name": "claude-pet-companion",
+  "version": "2.4.0",
+  "description": "A 3D virtual pet plugin for Claude Code with evolution system - 10 stages, 5 paths, 100+ accessories",
+  "author": "Claude Code Community",
+  "license": "MIT",
+  "skills": [
+    {
+      "name": "pet-core",
+      "path": "skills/pet-core",
+      "description": "Core pet management system with state, stats, XP, evolution, and achievements"
+    },
+    {
+      "name": "emotion-tracker",
+      "path": "skills/emotion-tracker",
+      "description": "Tracks coding activities and calculates pet emotions"
+    },
+    {
+      "name": "pet:feed",
+      "path": "skills/pet-commands/feed.md",
+      "description": "Feed your pet to restore hunger"
+    },
+    {
+      "name": "pet:play",
+      "path": "skills/pet-commands/play.md",
+      "description": "Play with your pet to increase happiness"
+    },
+    {
+      "name": "pet:sleep",
+      "path": "skills/pet-commands/sleep.md",
+      "description": "Put your pet to sleep to restore energy"
+    },
+    {
+      "name": "pet:status",
+      "path": "skills/pet-commands/status.md",
+      "description": "Check your pet's current status and stats"
+    }
+  ],
+  "hooks": "hooks/hooks.json",
+  "agents": [
+    {
+      "name": "pet-companion",
+      "path": "agents/pet-companion.md",
+      "description": "AI pet personality with emotional responses to coding activities"
+    }
+  ],
+  "settings": {
+    "data_dir": "data",
+    "state_file": "pet_state.json",
+    "auto_save_interval": 60,
+    "meal_times": {
+      "breakfast": [7, 9],
+      "lunch": [12, 14],
+      "dinner": [18, 20]
+    },
+    "sleep_hours": [22, 6]
+  },
+  "webview": {
+    "id": "claudePetCompanion",
+    "title": "Pet Companion",
+    "entry": "webview/index.html",
+    "enable_scripts": true,
+    "retain_context_when_hidden": true
+  }
+}

@@ -1,0 +1,151 @@
+/* Pixel Art CSS - Ensures crisp pixel rendering */
+
+/* Reset and Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background-color: #1a1a2e;
+    color: #eee;
+    overflow: hidden;
+}
+
+/* Pixel-perfect canvas rendering */
+#pet-canvas {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+
+    /* Scale up from 64x64 to display size */
+    width: 256px;
+    height: 256px;
+
+    display: block;
+    margin: 0 auto;
+
+    /* Enable smooth scaling transformation */
+    transform-origin: center center;
+    transition: transform 0.1s ease;
+}
+
+/* Pixel font (fallback to monospace) */
+.pixel-font {
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    font-size: 8px;
+    line-height: 1.5;
+    letter-spacing: 0;
+}
+
+/* Pixel border utility */
+.pixel-border {
+    border: 4px solid #333;
+    border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M2 2h8v8H2z' fill='none' stroke='%23333' stroke-width='4'/%3E%3C/svg%3E") 4 stretch;
+}
+
+/* Pixel shadow */
+.pixel-shadow {
+    box-shadow:
+        4px 0 0 0 rgba(0,0,0,0.3),
+        -4px 0 0 0 rgba(0,0,0,0.3),
+        0 4px 0 0 rgba(0,0,0,0.3),
+        0 -4px 0 0 rgba(0,0,0,0.3);
+}
+
+/* Pixelated icon scaling */
+.pixel-icon {
+    image-rendering: pixelated;
+    width: 16px;
+    height: 16px;
+}
+
+/* Scanline effect for retro feel */
+.scanlines::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+}
+
+/* Animation frames for bouncing */
+@keyframes pixel-bounce {
+    0%, 100% { transform: translateY(0) scale(4); }
+    50% { transform: translateY(-4px) scale(4); }
+}
+
+/* Animation frames for wobbling */
+@keyframes pixel-wobble {
+    0%, 100% { transform: scale(4) rotate(0deg); }
+    25% { transform: scale(4) rotate(-2deg); }
+    75% { transform: scale(4) rotate(2deg); }
+}
+
+/* Sleeping animation */
+@keyframes pixel-sleep {
+    0%, 100% { transform: scale(4); opacity: 1; }
+    50% { transform: scale(4); opacity: 0.7; }
+}
+
+/* Eating animation */
+@keyframes pixel-eat {
+    0% { transform: scale(4) scaleX(1); }
+    25% { transform: scale(4) scaleX(0.8); }
+    50% { transform: scale(4) scaleX(1.1); }
+    75% { transform: scale(4) scaleX(0.9); }
+    100% { transform: scale(4) scaleX(1); }
+}
+
+/* Apply animations based on state */
+#pet-canvas.animating.bounce {
+    animation: pixel-bounce 0.5s ease-in-out infinite;
+}
+
+#pet-canvas.animating.wobble {
+    animation: pixel-wobble 0.3s ease-in-out infinite;
+}
+
+#pet-canvas.animating.sleep {
+    animation: pixel-sleep 2s ease-in-out infinite;
+}
+
+#pet-canvas.animating.eat {
+    animation: pixel-eat 0.2s ease-in-out;
+}
+
+/* Pixel-perfect particles */
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    image-rendering: pixelated;
+    pointer-events: none;
+}
+
+@keyframes particle-float {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.5);
+    }
+}
+
+.particle.animating {
+    animation: particle-float 1s ease-out forwards;
+}
