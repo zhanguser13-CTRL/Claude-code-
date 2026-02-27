@@ -1,0 +1,92 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|Read|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=PostToolUse --tool=$TOOL_NAME --status=success --exit_code=$EXIT_CODE",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=PostToolUseFailure --tool=$TOOL_NAME --error=\"$ERROR_MESSAGE\"",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|Read|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=PreToolUse --tool=$TOOL_NAME",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SessionStart"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SessionEnd"
+          }
+        ]
+      }
+    ]
+  },
+  "skills": [
+    {
+      "name": "pet-status",
+      "description": "显示宠物状态面板",
+      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SkillCommand --command=status"
+    },
+    {
+      "name": "pet-stats",
+      "description": "显示生产力统计",
+      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SkillCommand --command=stats"
+    },
+    {
+      "name": "pet-focus",
+      "description": "切换专注模式",
+      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SkillCommand --command=focus"
+    },
+    {
+      "name": "pet-break",
+      "description": "进入休息模式",
+      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SkillCommand --command=break"
+    },
+    {
+      "name": "pet-feed",
+      "description": "喂食宠物",
+      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SkillCommand --command=feed"
+    },
+    {
+      "name": "pet-play",
+      "description": "和宠物玩耍",
+      "command": "python ${CLAUDE_PLUGIN_ROOT}/scripts/activity_tracker.py --event=SkillCommand --command=play"
+    }
+  ]
+}

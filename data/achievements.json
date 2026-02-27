@@ -1,0 +1,202 @@
+{
+  "achievements": {
+    "first_blood": {
+      "id": "first_blood",
+      "name": "Hello World",
+      "description": "Create your first file",
+      "category": "milestone",
+      "xp_reward": 50,
+      "condition": "files_created >= 1",
+      "icon": "👋",
+      "hidden": false,
+      "secret": false
+    },
+    "productive_day": {
+      "id": "productive_day",
+      "name": "Productive Day",
+      "description": "Create 10 files in a single day",
+      "category": "milestone",
+      "xp_reward": 100,
+      "condition": "files_created >= 10",
+      "icon": "📝",
+      "hidden": false,
+      "secret": false
+    },
+    "century": {
+      "id": "century",
+      "name": "Century",
+      "description": "Reach level 100",
+      "category": "milestone",
+      "xp_reward": 1000,
+      "condition": "level >= 100",
+      "icon": "💯",
+      "hidden": false,
+      "secret": false
+    },
+    "error_hunter": {
+      "id": "error_hunter",
+      "name": "Bug Squasher",
+      "description": "Fix 100 errors",
+      "category": "coding",
+      "xp_reward": 500,
+      "condition": "errors_fixed >= 100",
+      "icon": "🔨",
+      "hidden": false,
+      "secret": false
+    },
+    "code_warrior": {
+      "id": "code_warrior",
+      "name": "Code Warrior",
+      "description": "Fix 1000 errors",
+      "category": "coding",
+      "xp_reward": 2000,
+      "condition": "errors_fixed >= 1000",
+      "icon": "⚔️",
+      "hidden": false,
+      "secret": false
+    },
+    "speed_coder": {
+      "id": "speed_coder",
+      "name": "Speed Coder",
+      "description": "Have 10 consecutive successful actions",
+      "category": "coding",
+      "xp_reward": 150,
+      "condition": "consecutive_successes >= 10",
+      "icon": "⚡",
+      "hidden": false,
+      "secret": false
+    },
+    "unstoppable": {
+      "id": "unstoppable",
+      "name": "Unstoppable",
+      "description": "Have 20 consecutive successful actions",
+      "category": "coding",
+      "xp_reward": 300,
+      "condition": "consecutive_successes >= 20",
+      "icon": "🚀",
+      "hidden": false,
+      "secret": false
+    },
+    "good_owner": {
+      "id": "good_owner",
+      "name": "Good Owner",
+      "description": "Feed your pet 50 times",
+      "category": "social",
+      "xp_reward": 200,
+      "condition": "times_fed >= 50",
+      "icon": "🍖",
+      "hidden": false,
+      "secret": false
+    },
+    "best_friend": {
+      "id": "best_friend",
+      "name": "Best Friend",
+      "description": "Play with your pet 100 times",
+      "category": "social",
+      "xp_reward": 300,
+      "condition": "times_played >= 100",
+      "icon": "🎾",
+      "hidden": false,
+      "secret": false
+    },
+    "happy_camper": {
+      "id": "happy_camper",
+      "name": "Happy Camper",
+      "description": "Keep happiness above 90 for a whole day",
+      "category": "social",
+      "xp_reward": 250,
+      "condition": "happiness >= 90 and total_sessions >= 5",
+      "icon": "😊",
+      "hidden": false,
+      "secret": false
+    },
+    "night_owl": {
+      "id": "night_owl",
+      "name": "Night Owl",
+      "description": "Code past midnight",
+      "category": "time",
+      "xp_reward": 200,
+      "condition": "session_count >= 1",
+      "icon": "🦉",
+      "hidden": false,
+      "secret": false
+    },
+    "early_bird": {
+      "id": "early_bird",
+      "name": "Early Bird",
+      "description": "Have a coding session before 6 AM",
+      "category": "time",
+      "xp_reward": 200,
+      "condition": "session_count >= 1",
+      "icon": "🐦",
+      "hidden": false,
+      "secret": false
+    },
+    "marathon_session": {
+      "id": "marathon_session",
+      "name": "Marathon Session",
+      "description": "Complete 25 coding sessions",
+      "category": "time",
+      "xp_reward": 500,
+      "condition": "total_sessions >= 25",
+      "icon": "🏃",
+      "hidden": false,
+      "secret": false
+    },
+    "first_evolution": {
+      "id": "first_evolution",
+      "name": "Growing Up",
+      "description": "Evolve your pet for the first time",
+      "category": "special",
+      "xp_reward": 500,
+      "condition": "evolution_stage >= 1",
+      "icon": "🥚",
+      "hidden": false,
+      "secret": false
+    },
+    "master_evolver": {
+      "id": "master_evolver",
+      "name": "Master Evolver",
+      "description": "Reach Ancient stage",
+      "category": "special",
+      "xp_reward": 2000,
+      "condition": "evolution_stage >= 6",
+      "icon": "🌟",
+      "hidden": false,
+      "secret": false
+    },
+    "perfectionist": {
+      "id": "perfectionist",
+      "name": "Perfectionist",
+      "description": "Reach level 50 with less than 10 errors fixed",
+      "category": "special",
+      "xp_reward": 1000,
+      "condition": "level >= 50 and errors_fixed < 10",
+      "icon": "💎",
+      "hidden": false,
+      "secret": false
+    },
+    "lucky_seven": {
+      "id": "lucky_seven",
+      "name": "Lucky Seven",
+      "description": "Get 7 achievements",
+      "category": "special",
+      "xp_reward": 350,
+      "condition": "len(achievements) >= 7",
+      "icon": "🍀",
+      "hidden": false,
+      "secret": false
+    },
+    "completionist": {
+      "id": "completionist",
+      "name": "Completionist",
+      "description": "Unlock all achievements",
+      "category": "special",
+      "xp_reward": 5000,
+      "condition": "len(achievements) >= 17",
+      "icon": "🏆",
+      "hidden": false,
+      "secret": true
+    }
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "paths": {
+    "balanced": {
+      "name": "Balanced",
+      "description": "A well-rounded coding companion",
+      "bonus_conditions": {
+        "files_modified": 1.0,
+        "errors_fixed": 1.0,
+        "interactions": 1.0
+      },
+      "sprites": {
+        "0": "egg.png",
+        "1": "hatchling_balanced.png",
+        "2": "baby_balanced.png",
+        "3": "child_balanced.png",
+        "4": "preteen_balanced.png",
+        "5": "teen_balanced.png",
+        "6": "youngadult_balanced.png",
+        "7": "adult_balanced.png",
+        "8": "elder_balanced.png",
+        "9": "ancient_balanced.png"
+      },
+      "colors": {
+        "primary": "#059669",
+        "secondary": "#10b981",
+        "accent": "#34d399"
+      }
+    },
+    "coder": {
+      "name": "Coder",
+      "description": "Specializes in file manipulation",
+      "bonus_conditions": {
+        "files_created": 1.5,
+        "files_modified": 1.5,
+        "errors_fixed": 0.8,
+        "interactions": 1.0
+      },
+      "sprites": {
+        "0": "egg.png",
+        "1": "hatchling_coder.png",
+        "2": "baby_coder.png",
+        "3": "child_coder.png",
+        "4": "preteen_coder.png",
+        "5": "teen_coder.png",
+        "6": "youngadult_coder.png",
+        "7": "adult_coder.png",
+        "8": "elder_coder.png",
+        "9": "ancient_coder.png"
+      },
+      "colors": {
+        "primary": "#1e40af",
+        "secondary": "#3b82f6",
+        "accent": "#22c55e"
+      }
+    },
+    "warrior": {
+      "name": "Warrior",
+      "description": "Bug-slaying specialist",
+      "bonus_conditions": {
+        "files_created": 0.8,
+        "files_modified": 1.0,
+        "errors_fixed": 2.0,
+        "interactions": 0.8
+      },
+      "sprites": {
+        "0": "egg.png",
+        "1": "hatchling_warrior.png",
+        "2": "baby_warrior.png",
+        "3": "child_warrior.png",
+        "4": "preteen_warrior.png",
+        "5": "teen_warrior.png",
+        "6": "youngadult_warrior.png",
+        "7": "adult_warrior.png",
+        "8": "elder_warrior.png",
+        "9": "ancient_warrior.png"
+      },
+      "colors": {
+        "primary": "#c2410c",
+        "secondary": "#f97316",
+        "accent": "#fbbf24"
+      }
+    },
+    "social": {
+      "name": "Social",
+      "description": "Thrives on interaction",
+      "bonus_conditions": {
+        "files_created": 1.0,
+        "files_modified": 1.0,
+        "errors_fixed": 1.0,
+        "interactions": 2.0
+      },
+      "sprites": {
+        "0": "egg.png",
+        "1": "hatchling_social.png",
+        "2": "baby_social.png",
+        "3": "child_social.png",
+        "4": "preteen_social.png",
+        "5": "teen_social.png",
+        "6": "youngadult_social.png",
+        "7": "adult_social.png",
+        "8": "elder_social.png",
+        "9": "ancient_social.png"
+      },
+      "colors": {
+        "primary": "#db2777",
+        "secondary": "#f472b6",
+        "accent": "#fb7185"
+      }
+    },
+    "night_owl": {
+      "name": "Night Owl",
+      "description": "Late-night coding specialist",
+      "bonus_conditions": {
+        "files_created": 1.2,
+        "files_modified": 1.2,
+        "errors_fixed": 1.2,
+        "interactions": 1.0,
+        "night_hours_xp": 1.5
+      },
+      "sprites": {
+        "0": "egg.png",
+        "1": "hatchling_night.png",
+        "2": "baby_night.png",
+        "3": "child_night.png",
+        "4": "preteen_night.png",
+        "5": "teen_night.png",
+        "6": "youngadult_night.png",
+        "7": "adult_night.png",
+        "8": "elder_night.png",
+        "9": "ancient_night.png"
+      },
+      "colors": {
+        "primary": "#5b21b6",
+        "secondary": "#8b5cf6",
+        "accent": "#fbbf24"
+      }
+    }
+  },
+  "stages": {
+    "0": {
+      "name": "Egg",
+      "name_cn": "蛋",
+      "level_requirement": 0,
+      "size": [32, 32],
+      "abilities": ["hatch"]
+    },
+    "1": {
+      "name": "Hatchling",
+      "name_cn": "破壳",
+      "level_requirement": 1,
+      "size": [40, 40],
+      "abilities": ["basic_emotions", "wobble"]
+    },
+    "2": {
+      "name": "Baby",
+      "name_cn": "幼体",
+      "level_requirement": 4,
+      "size": [48, 48],
+      "abilities": ["basic_emotions", "tumble"]
+    },
+    "3": {
+      "name": "Child",
+      "name_cn": "儿童",
+      "level_requirement": 8,
+      "size": [64, 64],
+      "abilities": ["basic_emotions", "particle_effects", "jump"]
+    },
+    "4": {
+      "name": "Pre-Teen",
+      "name_cn": "预备少年",
+      "level_requirement": 13,
+      "size": [72, 72],
+      "abilities": ["basic_emotions", "particle_effects", "speech_bubbles", "jump"]
+    },
+    "5": {
+      "name": "Teen",
+      "name_cn": "少年",
+      "level_requirement": 19,
+      "size": [80, 80],
+      "abilities": ["basic_emotions", "particle_effects", "speech_bubbles", "double_xp", "dash"]
+    },
+    "6": {
+      "name": "Young Adult",
+      "name_cn": "青年",
+      "level_requirement": 26,
+      "size": [96, 96],
+      "abilities": ["basic_emotions", "particle_effects", "speech_bubbles", "double_xp", "dash", "focus_mode"]
+    },
+    "7": {
+      "name": "Adult",
+      "name_cn": "成年",
+      "level_requirement": 36,
+      "size": [112, 112],
+      "abilities": ["basic_emotions", "particle_effects", "speech_bubbles", "double_xp", "dash", "focus_mode", "mentor_mode"]
+    },
+    "8": {
+      "name": "Elder",
+      "name_cn": "长者",
+      "level_requirement": 51,
+      "size": [128, 128],
+      "abilities": ["basic_emotions", "particle_effects", "speech_bubbles", "double_xp", "dash", "focus_mode", "mentor_mode", "wisdom_boost"]
+    },
+    "9": {
+      "name": "Ancient",
+      "name_cn": "远古",
+      "level_requirement": 71,
+      "size": [160, 160],
+      "abilities": ["basic_emotions", "particle_effects", "speech_bubbles", "double_xp", "dash", "focus_mode", "mentor_mode", "wisdom_boost", "legendary_aura", "time_warp"]
+    }
+  }
+}

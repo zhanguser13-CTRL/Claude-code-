@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-pet-companion"
+version = "2.3.1"
+description = "A virtual pet for Claude Code with daemon mode, IPC, and conversation history"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Claude Code Community"}
+]
+keywords = ["claude-code", "plugin", "pet", "companion", "pixel-art", "gamification"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/anthropics/claude-pet-companion"
+Documentation = "https://github.com/anthropics/claude-pet-companion/blob/main/README.md"
+Repository = "https://github.com/anthropics/claude-pet-companion"
+Issues = "https://github.com/anthropics/claude-pet-companion/issues"
+
+[project.scripts]
+claude-pet = "claude_pet_companion.cli:main"
+pet-companion = "claude_pet_companion.cli:main"
+
+[tool.setuptools]
+packages = ["claude_pet_companion"]
+
+[tool.setuptools.package-data]
+claude_pet_companion = ["webview/**/*", "data/*.json", ".claude-plugin/*.json", "hooks/*.json", "agents/*.md", "skills/**/*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py38", "py39", "py310", "py311"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true

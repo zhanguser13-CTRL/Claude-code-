@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Companion</title>
+    <link rel="stylesheet" href="css/pixel-art.css">
+    <link rel="stylesheet" href="css/ui.css">
+    <link rel="stylesheet" href="css/history.css">
+</head>
+<body>
+    <!-- Tab Navigation -->
+    <div id="tabs">
+        <button class="tab active" data-tab="pet">Pet</button>
+        <button class="tab" data-tab="history">History</button>
+    </div>
+
+    <!-- Pet Tab Content -->
+    <div id="pet-tab" class="tab-content active">
+        <div id="pet-container">
+        <!-- Pet Canvas -->
+        <canvas id="pet-canvas" width="64" height="64"></canvas>
+
+        <!-- Status Bars -->
+        <div id="status-bars">
+            <div class="stat-bar">
+                <span class="stat-label">🍖</span>
+                <div class="bar-container">
+                    <div id="hunger-bar" class="bar-fill hunger"></div>
+                </div>
+                <span id="hunger-value" class="stat-value">100</span>
+            </div>
+            <div class="stat-bar">
+                <span class="stat-label">😊</span>
+                <div class="bar-container">
+                    <div id="happiness-bar" class="bar-fill happiness"></div>
+                </div>
+                <span id="happiness-value" class="stat-value">100</span>
+            </div>
+            <div class="stat-bar">
+                <span class="stat-label">⚡</span>
+                <div class="bar-container">
+                    <div id="energy-bar" class="bar-fill energy"></div>
+                </div>
+                <span id="energy-value" class="stat-value">100</span>
+            </div>
+        </div>
+
+        <!-- Level & XP -->
+        <div id="level-info">
+            <span id="level-badge">Lv.1</span>
+            <span id="species-name">Baby</span>
+            <div class="xp-bar-container">
+                <div id="xp-bar" class="xp-bar-fill"></div>
+            </div>
+            <span id="xp-text" class="xp-text">0/100 XP</span>
+        </div>
+
+        <!-- Mood Display -->
+        <div id="mood-display">
+            <span id="mood-emoji">😊</span>
+            <span id="mood-text">Content</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div id="action-buttons">
+            <button id="btn-feed" class="pixel-btn" title="Feed your pet">
+                <span class="btn-icon">🍖</span>
+                <span class="btn-text">Feed</span>
+            </button>
+            <button id="btn-play" class="pixel-btn" title="Play with your pet">
+                <span class="btn-icon">🎾</span>
+                <span class="btn-text">Play</span>
+            </button>
+            <button id="btn-sleep" class="pixel-btn" title="Put to sleep / Wake up">
+                <span class="btn-icon">😴</span>
+                <span class="btn-text">Sleep</span>
+            </button>
+        </div>
+
+        <!-- Speech Bubble -->
+        <div id="speech-bubble" class="hidden">
+            <span id="speech-text">Hello!</span>
+        </div>
+
+        <!-- Achievement Notification -->
+        <div id="achievement-notification" class="hidden">
+            <span class="achievement-icon">🏆</span>
+            <div class="achievement-content">
+                <span id="achievement-title" class="achievement-title">Achievement Unlocked!</span>
+                <span id="achievement-name" class="achievement-name">Hello World</span>
+            </div>
+        </div>
+
+        <!-- Level Up Notification -->
+        <div id="levelup-notification" class="hidden">
+            <span class="levelup-icon">⬆️</span>
+            <span id="levelup-text" class="levelup-text">Level Up!</span>
+        </div>
+    </div>
+    </div>
+
+    <!-- History Tab Content -->
+    <div id="history-tab" class="tab-content">
+        <div id="history-view">
+            <div id="history-search">
+                <input type="text" id="search-input" placeholder="Search conversations...">
+                <select id="filter-select">
+                    <option value="all">All</option>
+                    <option value="successful">Successful</option>
+                    <option value="recent">Recent (24h)</option>
+                </select>
+            </div>
+            <div id="history-split">
+                <div id="history-split-left" class="left-panel">
+                    <div id="conversation-list">
+                        <div class="loading-state">
+                            <span class="loading-spinner"></span>
+                            <span>Loading conversations...</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="history-split-right" class="right-panel">
+                    <div id="conversation-detail">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💬</div>
+                            <div class="empty-state-text">Select a conversation to view details</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/vscode-bridge.js"></script>
+    <script src="js/ipc-client.js"></script>
+    <script src="js/sprite-manager.js"></script>
+    <script src="js/pet-renderer.js"></script>
+    <script src="js/animation-loop.js"></script>
+    <script src="js/drag-handler.js"></script>
+    <script src="js/interaction.js"></script>
+    <script src="js/history-view.js"></script>
+    <script src="js/conversation-view.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
