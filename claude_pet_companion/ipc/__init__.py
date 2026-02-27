@@ -5,9 +5,25 @@ IPC Package for Claude Pet Companion
 
 Provides inter-process communication between the pet daemon and clients.
 """
+from typing import TYPE_CHECKING
 from .protocol import Message, MessageType, create_message, parse_message
-from .server import IPCServer, DefaultMessageHandler
-from .client import IPCClient
+
+# Lazy imports to avoid circular dependency
+if TYPE_CHECKING:
+    from .server import IPCServer, DefaultMessageHandler
+    from .client import IPCClient
+else:
+    def __getattr__(name):
+        if name == "IPCServer":
+            from .server import IPCServer
+            return IPCServer
+        if name == "DefaultMessageHandler":
+            from .server import DefaultMessageHandler
+            return DefaultMessageHandler
+        if name == "IPCClient":
+            from .client import IPCClient
+            return IPCClient
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     'Message',

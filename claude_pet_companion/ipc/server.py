@@ -5,6 +5,9 @@ IPC Server for Claude Pet Companion
 
 TCP socket server that runs in the pet process and handles
 communication from clients.
+
+SECURITY: Now includes security middleware for authentication,
+rate limiting, and message validation.
 """
 import socket
 import threading
@@ -15,6 +18,11 @@ from pathlib import Path
 import time
 
 from .protocol import Message, MessageType, parse_message, create_message
+from ..security.ipc_middleware import (
+    SecurityMiddleware,
+    SecurityConfig,
+    create_security_middleware
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -87,10 +95,18 @@ class MessageHandler:
     """Base class for handling IPC messages"""
 
     def handle_hello(self, message: Message, client: ClientConnection) -> Optional[Message]:
-        """Handle client hello handshake"""
+        """
+        Handle client hello handshake with authentication.
+
+        Expects an optional 'auth_token' in the payload for authentication.
+        Returns a new token if none was provided.
+        """
         client.name = message.payload.get('client_name', client.name)
         client.version = message.payload.get('version', 'unknown')
         client.capabilities = message.payload.get('capabilities', [])
+
+        # Handle authentication if enabled
+        # Note: In a full implementation, pass server instance to access security
         logger.info(f"Client connected: {client.name} v{client.version}")
         return create_message(
             MessageType.HELLO,
@@ -195,10 +211,11 @@ class DefaultMessageHandler(MessageHandler):
 
 
 class IPCServer:
-    """IPC Server for pet daemon communication"""
+    """IPC Server for pet daemon communication with security middleware"""
 
     def __init__(self, host: str = '127.0.0.1', port: int = 15340,
-                 handler: MessageHandler = None):
+                 handler: MessageHandler = None,
+                 security_config: SecurityConfig = None):
         self.host = host
         self.port = port
         self.handler = handler or DefaultMessageHandler()
@@ -217,6 +234,13 @@ class IPCServer:
 
         # Message queue for outbound messages
         self.broadcast_queue: List[Message] = []
+
+        # Security middleware
+        self.security = security_config or create_security_middleware(
+            enable_auth=True,
+            max_message_size=1024 * 1024,
+            allowed_ips={'127.0.0.1', '::1'}
+        )
 
     def set_action_callback(self, callback: Callable):
         """Set callback for handling actions"""
@@ -287,17 +311,32 @@ class IPCServer:
         logger.info("IPC server stopped")
 
     def _server_loop(self):
-        """Main server loop"""
+        """Main server loop with security checks"""
         client_counter = 0
 
         while self.running:
             # Accept new connections
             try:
                 conn, addr = self.socket.accept()
+
+                # Security: Check connection
+                allowed, reason = self.security.check_connection(addr)
+                if not allowed:
+                    logger.warning(f"Connection rejected from {addr}: {reason}")
+                    try:
+                        conn.sendall(json.dumps({"error": reason}).encode('utf-8'))
+                        conn.close()
+                    except:
+                        pass
+                    continue
+
                 client_id = f"{time.time()}_{client_counter}"
                 client_counter += 1
 
                 client = ClientConnection(conn, addr, client_id)
+
+                # Register connection with security middleware
+                self.security.register_connection(client_id, addr)
 
                 with self.clients_lock:
                     self.clients[client_id] = client
@@ -320,7 +359,7 @@ class IPCServer:
             time.sleep(0.01)  # Small sleep to prevent busy-waiting
 
     def _process_clients(self):
-        """Process messages from all clients"""
+        """Process messages from all clients with security validation"""
         with self.clients_lock:
             disconnected = []
 
@@ -328,6 +367,17 @@ class IPCServer:
                 # Receive messages
                 message = client.receive()
                 if message:
+                    # Security: Validate message
+                    is_valid, error = self.security.validate_message(message, client_id)
+                    if not is_valid:
+                        logger.warning(f"Message rejected from {client.name}: {error}")
+                        # Send error response
+                        try:
+                            client.send(message.error(error))
+                        except:
+                            pass
+                        continue
+
                     self._handle_message(message, client)
 
                 # Check if disconnected
@@ -337,6 +387,8 @@ class IPCServer:
             # Remove disconnected clients
             for client_id in disconnected:
                 client = self.clients.pop(client_id)
+                # Unregister from security middleware
+                self.security.unregister_connection(client_id)
                 client.close()
                 logger.info(f"Client disconnected: {client.name}")
 

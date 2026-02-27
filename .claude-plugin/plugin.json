@@ -1,6 +1,6 @@
 {
   "name": "claude-pet-companion",
-  "version": "2.3.4",
+  "version": "2.4.0",
   "description": "A 3D virtual pet plugin for Claude Code with evolution system - 10 stages, 5 paths, 100+ accessories",
   "author": "Claude Code Community",
   "license": "MIT",

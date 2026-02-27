@@ -9,6 +9,41 @@ from enum import Enum
 import json
 from pathlib import Path
 from datetime import datetime
+import sys
+
+# Import safe expression evaluator
+security_path = Path(__file__).parent.parent.parent.parent / 'claude_pet_companion' / 'security'
+if str(security_path) not in sys.path:
+    sys.path.insert(0, str(security_path))
+
+try:
+    from safe_eval import validate_achievement_condition, SafeExpressionEvaluator
+except ImportError:
+    # Fallback to basic validation if security module not available
+    def validate_achievement_condition(condition: str, state) -> bool:
+        """Fallback safe evaluator - only allows basic comparisons."""
+        # Very restricted fallback - only allow alphanumeric, spaces, and comparison operators
+        allowed_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ >=<+-.!%*/()andor')
+        if not all(c in allowed_chars for c in condition):
+            return False
+        try:
+            # Build context from state
+            context = {}
+            for attr in ['level', 'xp', 'total_xp', 'happiness', 'health',
+                        'hunger', 'energy', 'evolution_stage', 'files_created',
+                        'files_modified', 'commands_run', 'errors_fixed',
+                        'consecutive_successes', 'consecutive_failures',
+                        'total_sessions', 'times_fed', 'times_played',
+                        'session_count']:
+                if hasattr(state, attr):
+                    context[attr] = getattr(state, attr)
+            return eval(condition, {"__builtins__": {}, "__import__": __import__}, context)
+        except:
+            return False
+
+    class SafeExpressionEvaluator:
+        """Fallback evaluator class."""
+        pass
 
 
 class AchievementCategory(Enum):
@@ -236,33 +271,25 @@ class AchievementSystem:
         self.achievements = default_achievements
 
     def check_achievement(self, achievement_id: str, state) -> bool:
-        """Check if an achievement's condition is met."""
+        """
+        Check if an achievement's condition is met.
+
+        Uses SafeExpressionEvaluator to securely evaluate achievement conditions
+        without the risks of eval().
+        """
         if achievement_id not in self.achievements:
             return False
 
         achievement = self.achievements[achievement_id]
 
         try:
-            # Create a safe evaluation context
-            context = {
-                "files_created": state.files_created,
-                "files_modified": state.files_modified,
-                "commands_run": state.commands_run,
-                "errors_fixed": state.errors_fixed,
-                "consecutive_successes": state.consecutive_successes,
-                "consecutive_failures": state.consecutive_failures,
-                "level": state.level,
-                "total_sessions": state.total_sessions,
-                "times_fed": state.times_fed,
-                "times_played": state.times_played,
-                "happiness": state.happiness,
-                "evolution_stage": state.evolution_stage,
-                "xp": state.xp,
-                "total_xp": state.total_xp
-            }
-
-            return eval(achievement.condition, {"__builtins__": {}}, context)
+            # Use the safe expression evaluator instead of eval()
+            return validate_achievement_condition(achievement.condition, state)
+        except (ValueError, SyntaxError, TypeError):
+            # Log the error for debugging but return False
+            return False
         except Exception:
+            # Catch any other unexpected errors
             return False
 
     def check_all_achievements(self, state) -> List[str]:

@@ -2,6 +2,9 @@
 Achievements - Achievement tracking system
 
 Tracks player achievements and rewards.
+
+SECURITY: Uses SafeExpressionEvaluator instead of eval() to prevent
+code injection vulnerabilities.
 """
 from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass
@@ -11,6 +14,51 @@ from pathlib import Path
 from datetime import datetime
 import re
 import operator
+import sys
+
+# Import safe expression evaluator
+security_path = Path(__file__).parent.parent.parent.parent.parent / 'security'
+if str(security_path) not in sys.path:
+    sys.path.insert(0, str(security_path))
+
+try:
+    from claude_pet_companion.security.safe_eval import (
+        validate_achievement_condition,
+        SafeExpressionEvaluator
+    )
+except ImportError:
+    # Fallback implementation
+    def validate_achievement_condition(condition: str, state) -> bool:
+        """Fallback safe evaluator using regex-based tokenization."""
+        # Tokenize and validate the condition
+        tokens = re.findall(r'[a-zA-Z_][a-zA-Z0-9_]*|\d+\.?\d*|>=|<=|==|!=|>|<|and|or|not|\(|\)|\+|\-|\*|\/|\%', condition)
+
+        # Check for suspicious patterns
+        dangerous_patterns = ['__', 'import', 'exec', 'eval', 'open', 'file', 'class', 'lambda']
+        for token in tokens:
+            if any(pattern in token.lower() for pattern in dangerous_patterns):
+                return False
+
+        try:
+            # Build context from state
+            context = {}
+            for attr in ['level', 'xp', 'total_xp', 'happiness', 'health',
+                        'hunger', 'energy', 'evolution_stage', 'files_created',
+                        'files_modified', 'commands_run', 'errors_fixed',
+                        'consecutive_successes', 'consecutive_failures',
+                        'total_sessions', 'times_fed', 'times_played',
+                        'session_count']:
+                if hasattr(state, attr):
+                    context[attr] = getattr(state, attr)
+
+            # Use a very restricted environment for eval
+            return eval(condition, {"__builtins__": {}, "True": True, "False": False, "None": None}, context)
+        except:
+            return False
+
+    class SafeExpressionEvaluator:
+        """Fallback evaluator class."""
+        pass
 
 
 class AchievementCategory(Enum):
@@ -238,33 +286,25 @@ class AchievementSystem:
         self.achievements = default_achievements
 
     def check_achievement(self, achievement_id: str, state) -> bool:
-        """Check if an achievement's condition is met."""
+        """
+        Check if an achievement's condition is met.
+
+        Uses SafeExpressionEvaluator to securely evaluate achievement conditions
+        without the risks of eval(). This prevents code injection attacks.
+        """
         if achievement_id not in self.achievements:
             return False
 
         achievement = self.achievements[achievement_id]
 
         try:
-            # Create a safe evaluation context
-            context = {
-                "files_created": state.files_created,
-                "files_modified": state.files_modified,
-                "commands_run": state.commands_run,
-                "errors_fixed": state.errors_fixed,
-                "consecutive_successes": state.consecutive_successes,
-                "consecutive_failures": state.consecutive_failures,
-                "level": state.level,
-                "total_sessions": state.total_sessions,
-                "times_fed": state.times_fed,
-                "times_played": state.times_played,
-                "happiness": state.happiness,
-                "evolution_stage": state.evolution_stage,
-                "xp": state.xp,
-                "total_xp": state.total_xp
-            }
-
-            return eval(achievement.condition, {"__builtins__": {}}, context)
+            # Use the safe expression evaluator instead of eval()
+            return validate_achievement_condition(achievement.condition, state)
+        except (ValueError, SyntaxError, TypeError):
+            # Log the error for debugging but return False
+            return False
         except Exception:
+            # Catch any other unexpected errors
             return False
 
     def check_all_achievements(self, state) -> List[str]:

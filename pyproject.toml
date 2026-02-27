@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-pet-companion"
-version = "2.3.4"
+version = "2.4.0"
 description = "A virtual pet for Claude Code with daemon mode, IPC, and conversation history"
 readme = "README.md"
 license = {text = "MIT"}
@@ -23,6 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
@@ -44,7 +45,7 @@ claude_pet_companion = ["webview/**/*", "data/*.json", ".claude-plugin/*.json", 
 
 [tool.black]
 line-length = 100
-target-version = ["py38", "py39", "py310", "py311"]
+target-version = ["py38", "py39", "py310", "py311", "py312", "py313"]
 
 [tool.mypy]
 python_version = "3.8"
