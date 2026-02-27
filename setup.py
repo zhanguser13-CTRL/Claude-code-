@@ -20,7 +20,7 @@ readme_file = Path(__file__).parent / "README.md"
 long_description = readme_file.read_text(encoding="utf-8") if readme_file.exists() else ""
 
 # Version - Direct specification (2.3.1)
-VERSION = "2.3.1"
+version = "2.3.2"
 
 
 setup(
