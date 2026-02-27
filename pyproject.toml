@@ -27,10 +27,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/anthropics/claude-pet-companion"
-Documentation = "https://github.com/anthropics/claude-pet-companion/blob/main/README.md"
-Repository = "https://github.com/anthropics/claude-pet-companion"
-Issues = "https://github.com/anthropics/claude-pet-companion/issues"
+Homepage = "https://github.com/zhanguser13-CTRL/Claude-code-"
+Documentation = "https://github.com/zhanguser13-CTRL/Claude-code-/blob/main/README.md"
+Repository = "https://github.com/zhanguser13-CTRL/Claude-code-"
+Issues = "https://github.com/zhanguser13-CTRL/Claude-code-/issues"
 
 [project.scripts]
 claude-pet = "claude_pet_companion.cli:main"
