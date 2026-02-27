@@ -71,29 +71,47 @@ def update_version(new_version: str) -> None:
     """Update version in all files."""
     files_updated = []
 
-    for file_path, pattern in VERSION_FILES.items():
+    # Specific replacements for each file
+    replacements = {
+        "pyproject.toml": [
+            (r'^version = "[\d.]+"', f'version = "{new_version}"'),
+        ],
+        "setup.py": [
+            (r'^VERSION = "[\d.]+"', f'VERSION = "{new_version}"'),
+        ],
+        ".claude-plugin/plugin.json": [
+            (r'"version":\s*"[\d.]+"', f'"version": "{new_version}"'),
+        ],
+        "claude_pet_companion/__init__.py": [
+            (r'^__version__ = "[\d.]+"', f'__version__ = "{new_version}"'),
+        ],
+    }
+
+    for file_path, patterns in replacements.items():
         path = Path(__file__).parent / file_path
         if not path.exists():
             print(f"  ⚠ Skipping {file_path} (not found)")
             continue
 
         content = path.read_text()
-        match = re.search(pattern, content)
-        if not match:
-            print(f"  ⚠ Skipping {file_path} (pattern not found)")
-            continue
+        old_content = content
 
-        old_version = match.group(1)
-        new_content = re.sub(pattern, f'version = "{new_version}"', content)
-        # Handle different file formats
-        if "plugin.json" in file_path:
-            new_content = re.sub(r'"version":\s*"[^"]+"', f'"version": "{new_version}"', content)
-        elif "__init__.py" in file_path:
-            new_content = re.sub(r'__version__ = "[^"]+"', f'__version__ = "{new_version}"', content)
+        for pattern, replacement in patterns:
+            # Use multiline mode and only replace at line start
+            if file_path == ".claude-plugin/plugin.json":
+                content = re.sub(pattern, replacement, content, count=1)
+            else:
+                content = re.sub(pattern, replacement, content, flags=re.MULTILINE, count=1)
 
-        path.write_text(new_content)
-        files_updated.append(file_path)
-        print(f"  ✓ {file_path}: {old_version} → {new_version}")
+        if content != old_content:
+            # Extract old version for display
+            old_match = re.search(r'[\d.]+\.[\d.]+\.[\d.]+', old_content)
+            old_version = old_match.group(0) if old_match else "?"
+            path.write_text(content)
+            files_updated.append(file_path)
+            print(f"  ✓ {file_path}: {old_version} → {new_version}")
+        else:
+            print(f"  ⚠ Skipping {file_path} (no change needed)")
 
     return files_updated
 
