@@ -1,6 +1,7 @@
 # Claude Pet Companion
 
-![Version](https://img.shields.io/badge/version-2.3.0-blue)
+![Version](https://img.shields.io/badge/version-2.3.1-blue)
+![PyPI](https://img.shields.io/badge/PyPI-claude--pet--companion-orange)
 ![Python](https://img.shields.io/badge/python-3.8+-green)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -26,7 +27,18 @@ claude-pet install
 
 ---
 
-## What's New in v2.3
+## What's New in v2.3.1
+
+- **Fixed Installation Bugs** - Fixed `check_installed()` and `data_dir` issues
+- **Error Handling System** - Centralized logging and error management
+- **Cross-Platform Audio** - Sound effects system (Windows/macOS/Linux)
+- **Extended Achievements** - 30+ achievements with rarity levels
+- **Customization System** - Accessories, colors, and appearance options
+- **Animation Library** - Keyframe animations with easing functions
+- **Minigames** - Catch and Memory games with rewards
+- **Unit Tests** - 36 tests with 100% pass rate
+
+### v2.3 Features
 
 - **Daemon Mode** - Single-instance background process
 - **IPC Communication** - Real-time pet state queries
