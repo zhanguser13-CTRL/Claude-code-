@@ -22,8 +22,6 @@ jobs:
       version: ${{ steps.get_version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Get version
         id: get_version
@@ -52,6 +50,9 @@ jobs:
       - name: Check package
         run: twine check dist/*
 
+      - name: List build artifacts
+        run: ls -la dist/
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -73,24 +74,21 @@ jobs:
           name: dist
           path: dist/
 
-      - name: Extract release notes
-        id: release_notes
-        run: |
-          VERSION="${{ needs.build.outputs.version }}"
-          NOTES=$(awk "/^## What's New in ${VERSION#v}/,/^## [A-Z]/ {print}" README.md | head -n -1)
-          if [ -z "$NOTES" ]; then
-            NOTES="Release ${VERSION}"
-          fi
-          echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+      - name: List artifacts
+        run: ls -la dist/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.build.outputs.version }}
           name: Release ${{ needs.build.outputs.version }}
-          body: ${{ steps.release_notes.outputs.notes }}
+          body: |
+            ## Release ${{ needs.build.outputs.version }}
+
+            ### Installation
+            ```bash
+            pip install claude-pet-companion==${{ needs.build.outputs.version }}
+            ```
           files: |
             dist/*.tar.gz
             dist/*.whl
@@ -114,27 +112,12 @@ jobs:
           name: dist
           path: dist/
 
+      - name: List artifacts to publish
+        run: ls -la dist/
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
-          skip-existing: false
+          skip-existing: true
           verbose: true
-
-  post-release:
-    needs: [create-github-release, publish-to-pypi]
-    runs-on: ubuntu-latest
-    if: success()
-    steps:
-      - name: Release summary
-        run: |
-          echo "## 🎉 Release Complete! 🎉" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version**: ${{ needs.build.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **GitHub Release**: https://github.com/${{ github.repository }}/releases/tag/${{ needs.build.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **PyPI**: https://pypi.org/project/claude-pet-companion/" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Installation" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "pip install claude-pet-companion==${{ needs.build.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
